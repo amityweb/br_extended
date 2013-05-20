@@ -1,7 +1,7 @@
 BrilliantRetail Extended Plugin
 ===========
 
-BrilliantRetail plugin to extend some functionality
+ExpressionEngine's BrilliantRetail plugin to extend some functionality
 
 Only a couple of functions at the moment...
 
