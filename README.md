@@ -1,4 +1,4 @@
-br_extended
+BrilliantRetail Extended Plugin
 ===========
 
 BrilliantRetail plugin to extend some functionality
@@ -12,3 +12,9 @@ Only a couple of functions at the moment...
 3) Set a default country in the Country options drop down
 
 
+Usage
+------------
+
+### Countries Select
+{exp:br_extended:countries name=“br_shipping_country” id=“br_shipping_country” class=“required” value=”{br_shipping_country}” default=“GB”}
+		

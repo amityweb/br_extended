@@ -17,7 +17,10 @@ class Br_extended extends Brilliant_retail
 	}
 	
 	/******************************************************************** 
-	Output raw options values for creating a Quantity Discounts table ***/
+	Output raw options values for creating a Quantity Discounts table 
+	because the core BR function formats the options into HTML already!
+	Does not need to be Quantity Discounts, its just what we are using it for 
+	Example here http://www.exquisitelybritishart.co.uk/product/dj-vu--1 *******/
 	
 	function quantity_discounts($product_id='')
 	{
@@ -63,8 +66,8 @@ class Br_extended extends Brilliant_retail
 		
 	}
 	
-	/******************************************************************** 
-	Just get raw product data with no processing like in the original
+	/****************************************************************************** 
+	Just get raw product data with no processing which the original function does
 	original: core/class/core.brilliant_retail.php **********/
 		
 	function _get_product($product_id)
@@ -133,7 +136,11 @@ class Br_extended_usage
 		ob_start();
 		?>
 		
-		No instructions at this time sorry
+		Usage:
+		
+		Countries with Default Selection
+		{exp:br_extended:countries name=“br_shipping_country” id=“br_shipping_country” class=“required” value=”{br_shipping_country}” default=“GB”}
+		
 		
 		<?php
 		$buffer = ob_get_contents();
