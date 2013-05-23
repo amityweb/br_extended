@@ -67,7 +67,9 @@ class Br_extended extends Brilliant_retail
 	}
 
 	/****************************************************************************** 
-	Get Products **********/
+	Get Products
+	Return all products regardless of categpry, and pass WHERE statements to the _get_products SQL
+	**********/
 
 	function products()
 	{
@@ -104,7 +106,9 @@ class Br_extended extends Brilliant_retail
 	
 	
 	/****************************************************************************** 
-	Get Products SQL **********/
+	Get Products SQL
+	Return all products and optionall add a WHERE statement from the products() function
+	**********/
 
 	function _get_products($where)
 	{
