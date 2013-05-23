@@ -15,21 +15,21 @@ class Br_extended extends Brilliant_retail
 	{
 		parent::__construct();
 	}
-	
+
 	/******************************************************************** 
 	Output raw options values for creating a Quantity Discounts table 
 	because the core BR function formats the options into HTML already!
 	Does not need to be Quantity Discounts, its just what we are using it for 
 	Example here http://www.exquisitelybritishart.co.uk/product/dj-vu--1 *******/
-	
+
 	function quantity_discounts($product_id='')
 	{
 		include_once(APPPATH.'modules/channel/mod.channel.php');
-		
+
 		$product_id = $this->EE->TMPL->fetch_param('product_id');
 		$products 	= $this->_get_product($product_id);
 		$templatedata = $this->EE->TMPL->tagdata;
-		
+
 		$products_options = $products[0]['options'];
 
 		$count = 0;
@@ -41,7 +41,7 @@ class Br_extended extends Brilliant_retail
 				if( $products_option['title'] == 'Quantity Discount')
 				{
 					$total = count($products_option['opts']);
-	
+
 					foreach($products_option['opts'] AS $products_option_opts)
 					{
 						if( $products_option_opts['title'] != "" )
@@ -54,49 +54,94 @@ class Br_extended extends Brilliant_retail
 								'options_price' => str_replace('-','-£',$products_option_opts['price'])
 							);
 							$output .= $this->EE->TMPL->parse_variables_row($templatedata, $options);
-	
+
 						}
 					}
 				}
-				
+
 			}
 			return $output;
 		}
-		
-		
+
+
 	}
-	
+
 	/****************************************************************************** 
-	Just get raw product data with no processing which the original function does
-	original: core/class/core.brilliant_retail.php **********/
-		
-	function _get_product($product_id)
+	Get Products **********/
+
+	function products()
 	{
-		if($product_id == '')
+
+		// Get product by param or dynamically 
+		$product_id = $this->EE->TMPL->fetch_param('product_id');
+		$url_title = $this->EE->TMPL->fetch_param('url_title');
+		$featured = $this->EE->TMPL->fetch_param('featured');
+		$templatedata = $this->EE->TMPL->tagdata;
+		
+		$where = array();
+		if($featured == true)
 		{
-			// Get product by param or dynamically 
-			$product_id = $this->EE->TMPL->fetch_param('product_id');
-			$url_title = $this->EE->TMPL->fetch_param('url_title');
-			if($product_id != '')
-			{
-				$products = $this->EE->product_model->get_products($product_id);			
-			}
-			else
-			{
-				// get by url key 
-				$key = ($url_title == '') ? $this->EE->uri->segment(2) : $url_title;
-				if(!$products = $this->EE->product_model->get_product_by_key($key))
-				{
-					 // Not a product page 
-					 return false;
-				}
-			}
+			$where[] = 'featured = 1';
 		}
 		
+
+		if(!$product_data = $this->_get_products($where))
+		{
+			 // Not a product page 
+			 return false;
+		}
+		
+		foreach($product_data AS $product_row)
+		{
+			$product = $this->_get_product($product_row['product_id']);
+			$products_array[] = $product[0];
+			
+		}
+			
+		return $this->EE->TMPL->parse_variables($templatedata, $products_array);
+
+	}
+	
+	
+	/****************************************************************************** 
+	Get Products SQL **********/
+
+	function _get_products($where)
+	{
+		$this->EE->db->select('*');
+		$this->EE->db->where('enabled >',0);
+		
+		foreach($where AS $key)
+		{
+			$this->EE->db->where($key);
+		}
+		
+
+		$this->EE->db->from('br_product');
+		$this->EE->db->order_by('product_id','desc');
+		
+		$query = $this->EE->db->get();
+		
+
+		if($query->num_rows() > 0)
+		{		
+		    foreach($query->result() as $row)
+		    {
+				$product_id = $row->product_id;
+				$product = $this->EE->product_model->get_products($product_id);
+				$products[] = $product[0];
+		    }
+		}
+		else
+		{
+			return false;
+		}
+
 		return $products;
 		
+
 	}
-		
+
 
 	/******************************************************************** 
 	Countries function to add a default country selection
@@ -118,14 +163,14 @@ class Br_extended extends Brilliant_retail
 		{
 			$selected = '';
 			if($key == $default) $selected = ' selected="selected"';
-			
+
 			$sel = ($key == $value) ? 'selected="selected"' : '' ;
 			$output .=	'<option value="'.$key.'" class="{zone_id:'.$val["zone_id"].'}" '.$sel.$selected.'>'.$val["title"].'</option>';
 		} 			
 		$output .= '</select>';
 		return $output;
 	}
-				
+
 }
 
 
